@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <link rel="stylesheet" href="circles.css">
+  <script type="text/javascript" src="paper-full.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.1.2/howler.min.js"></script>
+  <script type="text/paperscript" canvas="myCanvas">
+    var circlesArray = [];
+    var keyData = {
+      q:new Howl({src:['sounds/bubbles.mp3']}),
+      w:new Howl({src:['sounds/clay.mp3']}),
+      e:new Howl({src:['sounds/confetti.mp3']}),
+      r:new Howl({src:['sounds/corona.mp3']}),
+      t:new Howl({src:['sounds/dotted-spiral.mp3']}),
+      y:new Howl({src:['sounds/flash-1.mp3']}),
+      u:new Howl({src:['sounds/flash-2.mp3']}),
+      i:new Howl({src:['sounds/flash-3.mp3']}),
+      o:new Howl({src:['sounds/glimmer.mp3']}),
+      p:new Howl({src:['sounds/moon.mp3']}),
+      a:new Howl({src:['sounds/pinwheel.mp3']}),
+      s:new Howl({src:['sounds/piston-1.mp3']}),
+      d:new Howl({src:['sounds/piston-2.mp3']}),
+      f:new Howl({src:['sounds/piston-3.mp3']}),
+      g:new Howl({src:['sounds/prism-1.mp3']}),
+      h:new Howl({src:['sounds/prism-2.mp3']}),
+      j:new Howl({src:['sounds/prism-3.mp3']}),
+      k:new Howl({src:['sounds/splits.mp3']}),
+      l:new Howl({src:['sounds/squiggle.mp3']}),
+      z:new Howl({src:['sounds/strike.mp3']}),
+      x:new Howl({src:['sounds/suspension.mp3']}),
+      c:new Howl({src:['sounds/timer.mp3']}),
+      v:new Howl({src:['sounds/ufo.mp3']}),
+      b:new Howl({src:['sounds/veil.mp3']}),
+      n:new Howl({src:['sounds/wipe.mp3']}),
+      m:new Howl({src:['sounds/zig-zag.mp3']}),
+    };
+
+    function onKeyDown(event) {
+      if(keyData[event.key]){
+        keyData[event.key].play();
+      }
+      var maxPoint = new Point(view.size.width, view.size.height);
+      var randPoint = Point.random();
+      var point = maxPoint * randPoint;
+      var animatedCircle = new Path.Circle(point,300);
+      var randColor = "rgb("+(Math.random()*256)+", "+(Math.random()*256)+", "+(Math.random()*256)+")";
+      animatedCircle.fillColor = randColor;
+      circlesArray.push(animatedCircle);
+    }
+
+    function onFrame(event) {
+      for(var i=0; i<circlesArray.length;i++){
+        circlesArray[i].fillColor.hue +=1;
+        circlesArray[i].scale(.9);
+        if(circlesArray[i].area<1){
+          circlesArray.splice(i,1);
+          console.log(circlesArray);
+        };
+      }
+}
+</script>
+</head>
+
+<body>
+  <canvas id="myCanvas" resize></canvas>
+</body>
+
+</html>
