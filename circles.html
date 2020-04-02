@@ -20,111 +20,129 @@
     <canvas id="myCanvas" resize> </canvas>
     <script type="text/paperscript" canvas="myCanvas">
 
-      var circlesArray = [];
-      var text = new PointText({
-         point: view.center,
-         justification: 'center',
-         fontSize: 20,
-         fillColor: 'rgba(255, 255, 255, 0.4)',
-        fontWeight:'300',
-        fontFamily:'Quicksand',
-        content:'Press, click or tab to play'
-      });
-        var destination = Point.random() * view.size;
-            var keyData = {
-              q:new Howl({src:['sounds/bubbles.mp3']}),
-              w:new Howl({src:['sounds/clay.mp3']}),
-              e:new Howl({src:['sounds/confetti.mp3']}),
-              r:new Howl({src:['sounds/corona.mp3']}),
-              t:new Howl({src:['sounds/dotted-spiral.mp3']}),
-              y:new Howl({src:['sounds/flash-1.mp3']}),
-              u:new Howl({src:['sounds/flash-2.mp3']}),
-              i:new Howl({src:['sounds/flash-3.mp3']}),
-              o:new Howl({src:['sounds/glimmer.mp3']}),
-              p:new Howl({src:['sounds/moon.mp3']}),
-              a:new Howl({src:['sounds/pinwheel.mp3']}),
-              s:new Howl({src:['sounds/piston-1.mp3']}),
-              d:new Howl({src:['sounds/piston-2.mp3']}),
-              f:new Howl({src:['sounds/piston-3.mp3']}),
-              g:new Howl({src:['sounds/prism-1.mp3']}),
-              h:new Howl({src:['sounds/prism-2.mp3']}),
-              j:new Howl({src:['sounds/prism-3.mp3']}),
-              k:new Howl({src:['sounds/splits.mp3']}),
-              l:new Howl({src:['sounds/squiggle.mp3']}),
-              z:new Howl({src:['sounds/strike.mp3']}),
-              x:new Howl({src:['sounds/suspension.mp3']}),
-              c:new Howl({src:['sounds/timer.mp3']}),
-              v:new Howl({src:['sounds/ufo.mp3']}),
-              b:new Howl({src:['sounds/veil.mp3']}),
-              n:new Howl({src:['sounds/wipe.mp3']}),
-              m:new Howl({src:['sounds/zig-zag.mp3']}),
-            };
-            var speed=0.8;
-            var rotation;
+            var circlesArray = [];
+            var text = new PointText({
+               point: view.center,
+               justification: 'center',
+               fontSize: 20,
+               fillColor: 'rgba(255, 255, 255, 0.4)',
+              fontWeight:'300',
+              fontFamily:'Quicksand',
+              content:'Press, click, drag or tab to play'
+            });
+              var destination = Point.random() * view.size;
+                  var keyData = {
+                    q:new Howl({src:['sounds/bubbles.mp3']}),
+                    w:new Howl({src:['sounds/clay.mp3']}),
+                    e:new Howl({src:['sounds/confetti.mp3']}),
+                    r:new Howl({src:['sounds/corona.mp3']}),
+                    t:new Howl({src:['sounds/dotted-spiral.mp3']}),
+                    y:new Howl({src:['sounds/flash-1.mp3']}),
+                    u:new Howl({src:['sounds/flash-2.mp3']}),
+                    i:new Howl({src:['sounds/flash-3.mp3']}),
+                    o:new Howl({src:['sounds/glimmer.mp3']}),
+                    p:new Howl({src:['sounds/moon.mp3']}),
+                    a:new Howl({src:['sounds/pinwheel.mp3']}),
+                    s:new Howl({src:['sounds/piston-1.mp3']}),
+                    d:new Howl({src:['sounds/piston-2.mp3']}),
+                    f:new Howl({src:['sounds/piston-3.mp3']}),
+                    g:new Howl({src:['sounds/prism-1.mp3']}),
+                    h:new Howl({src:['sounds/prism-2.mp3']}),
+                    j:new Howl({src:['sounds/prism-3.mp3']}),
+                    k:new Howl({src:['sounds/splits.mp3']}),
+                    l:new Howl({src:['sounds/squiggle.mp3']}),
+                    z:new Howl({src:['sounds/strike.mp3']}),
+                    x:new Howl({src:['sounds/suspension.mp3']}),
+                    c:new Howl({src:['sounds/timer.mp3']}),
+                    v:new Howl({src:['sounds/ufo.mp3']}),
+                    b:new Howl({src:['sounds/veil.mp3']}),
+                    n:new Howl({src:['sounds/wipe.mp3']}),
+                    m:new Howl({src:['sounds/zig-zag.mp3']}),
+                  };
+                  var speed=0.8;
+                  var rotation;
+                  var dragPath;
 
+              function onMouseDown(event){
 
-        function onMouseDown(event){
-          if(event){
-            var keys=Object.keys(keyData);
-            var chooseSound = Math.floor(Math.random()*keys.length)
-            keyData[keys[chooseSound]].play()
-            var maxPoint = new Point(view.size.width, view.size.height);
-            var point = event.point
-            makeShapes(point)
-            text.fillColor='rgba(255, 255, 255, 0)';
-          }
-        }
+                  var keys=Object.keys(keyData);
+                  var chooseSound = Math.floor(Math.random()*keys.length)
+                  keyData[keys[chooseSound]].play()
+                  var maxPoint = new Point(view.size.width, view.size.height);
+                  var point = event.point
+                  makeShapes(point)
+                  text.fillColor='rgba(255, 255, 255, 0)';
+                  path = new Path();
+                  path.fillColor = new Color({ hue: Math.random() * 360, saturation: 1, brightness: 1 });
+                  path.add(event.point);
+              }
 
-        function onKeyDown(event) {
-            console.log(circlesArray)
-          if(keyData[event.key]){
-            keyData[event.key].play();
-          }
-          var maxPoint = new Point(view.size.width, view.size.height);
-          var randPoint = Point.random();
-          var point = maxPoint * randPoint;
-          makeShapes(point)
-          text.fillColor='rgba(255, 255, 255, 0)';
-        }
+              function onKeyDown(event) {
+                if(keyData[event.key]){
+                  keyData[event.key].play();
+                }
+                var maxPoint = new Point(view.size.width, view.size.height);
+                var randPoint = Point.random();
+                var point = maxPoint * randPoint;
+                makeShapes(point)
+                text.fillColor='rgba(255, 255, 255, 0)';
+              }
 
-        function onFrame(event) {
+              function onMouseDrag(event) {
+              	var step = event.delta / 2;
+              	step.angle += 90;
 
-          for(var i=0; i<circlesArray.length;i++){
-              circlesArray[i].fillColor.hue +=1;
-              circlesArray[i].rotate(rotation)
-              circlesArray[i].scale(speed);
+              	var top = event.middlePoint + step;
+              	var bottom = event.middlePoint - step;
 
+              	path.add(top);
+              	path.insert(0, bottom);
+              	path.smooth();
+              }
 
-            if(circlesArray[i].area<1){
-              circlesArray.splice(i,1);
-            };
-          }
-        }
+              function onMouseUp(event) {
+      	        path.add(event.point);
+      	        path.closed = true;
+      	        path.smooth();
+                path.visible=false
+      }
 
-        function makeShapes(point){
-          var rand = Math.floor(Math.random()*3)
-          console.log(rand)
-          var animatedShape;
-          if(rand===0){
-            animatedShape = new Path.Circle(point,300)
-            speed=Math.random()*0.3+0.7
-          }else if(rand===1){
-            animatedShape = new Path.Rectangle(point,point*Math.floor(Math.random()*2+3))
-            speed=0.99
-          }else{
+              function onFrame(event) {
 
-            animatedShape = new Path.RegularPolygon(point, 3, Math.floor(Math.random()*150+150));
-            speed=0.95
-          }
-          fillRandomColor(animatedShape)
-          rotation=Math.random() < 0.5 ? -1 : 1
-          circlesArray.push(animatedShape);
-        }
+                for(var i=0; i<circlesArray.length;i++){
+                    circlesArray[i].fillColor.hue +=1;
+                    circlesArray[i].rotate(rotation)
+                    circlesArray[i].scale(speed);
+                    path
 
-        function fillRandomColor(shape){
-          var randColor = "rgb("+(Math.random()*256)+", "+(Math.random()*256)+", "+(Math.random()*256)+")";
-          shape.fillColor = randColor;
-        }
+                  if(circlesArray[i].area<1){
+                    circlesArray.splice(i,1);
+                  };
+                }
+              }
+
+              function makeShapes(point){
+                var rand = Math.floor(Math.random()*3)
+                var animatedShape;
+                if(rand===0){
+                  animatedShape = new Path.Circle(point,300)
+                  speed=Math.random()*0.3+0.7
+                }else if(rand===1){
+                  animatedShape = new Path.Rectangle(point,point*Math.floor(Math.random()*2+3))
+                  speed=0.99
+                }else{
+                  animatedShape = new Path.RegularPolygon(point, 3, Math.floor(Math.random()*150+150));
+                  speed=0.95
+                }
+                fillRandomColor(animatedShape)
+                rotation=Math.random() < 0.5 ? -1 : 1
+                circlesArray.push(animatedShape);
+              }
+
+              function fillRandomColor(shape){
+                var randColor = "rgb("+(Math.random()*256)+", "+(Math.random()*256)+", "+(Math.random()*256)+")";
+                shape.fillColor = randColor;
+              }
     </script>
     <link rel="stylesheet" href="circles.css" / defer>
   </body>
