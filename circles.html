@@ -122,7 +122,7 @@
               }
 
               function makeShapes(point){
-                var rand = Math.floor(Math.random()*3)
+                var rand = Math.floor(Math.random()*4)
                 var animatedShape;
                 if(rand===0){
                   animatedShape = new Path.Circle(point,300)
@@ -131,7 +131,7 @@
                   animatedShape = new Path.Rectangle(point,point*Math.floor(Math.random()*2+3))
                   speed=0.99
                 }else{
-                  animatedShape = new Path.RegularPolygon(point, 3, Math.floor(Math.random()*150+150));
+                  animatedShape = new Path.Star(point, 5, Math.floor(Math.random()*100+200), 100);
                   speed=0.95
                 }
                 fillRandomColor(animatedShape)
